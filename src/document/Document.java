@@ -64,10 +64,27 @@ public abstract class Document {
 	 */
 	protected int countSyllables(String word)
 	{
+		word=word.toLowerCase();
 		// TODO: Implement this method so that you can call it from the 
 	    // getNumSyllables method in BasicDocument (module 2) and 
 	    // EfficientDocument (module 3).
-	    return 0;
+		int countSyllables=0;
+		int lastVowelIndex=-2;
+		for(int i=0;i<word.length();i++){
+			if(word.charAt(i)=='a' || word.charAt(i)=='o' || word.charAt(i)=='u' ||
+			   word.charAt(i)=='i' || word.charAt(i)=='y' || word.charAt(i)=='e'){
+				if(i==word.length()-1 && word.charAt(i)=='e'){
+					if(countSyllables==0){countSyllables++;}
+					break;
+				}
+				if(i-lastVowelIndex>1){countSyllables++;}
+				lastVowelIndex=i;
+					
+			}
+		
+		}
+			
+	    return countSyllables;
 	}
 	
 	/** A method for testing
