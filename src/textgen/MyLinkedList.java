@@ -1,6 +1,7 @@
 package textgen;
 
 import java.util.AbstractList;
+import java.lang.IndexOutOfBoundsException;
 
 
 /** A class that implements a doubly linked list
@@ -16,25 +17,41 @@ public class MyLinkedList<E> extends AbstractList<E> {
 
 	/** Create a new empty LinkedList */
 	public MyLinkedList() {
-		// TODO: Implement this method
+		//I am going to use  2 sentinel nodes 
+		//one for head and one for tail
+ 	 head=new LLNode<E>(null);
+	 tail=new LLNode<E>(null);
+	 head.next = tail;
+	 tail.prev = head;
+		size=0;
 	}
 
 	/**
 	 * Appends an element to the end of the list
 	 * @param element The element to add
 	 */
-	public boolean add(E element ) 
-	{
-		// TODO: Implement this method
-		return false;
+	public boolean add(E element ) //throws NullPointerException,IndexOutOfBoundsException
+	{	
+		//don't know if I should mention specific error throws
+		add(size,element);
+		return true;
 	}
+	
 
 	/** Get the element at position index 
 	 * @throws IndexOutOfBoundsException if the index is out of bounds. */
 	public E get(int index) 
-	{
-		// TODO: Implement this method.
-		return null;
+	{	if(index<0 || index>size-1){
+			throw new IndexOutOfBoundsException("Check out of bounds");
+	}
+	int count=0;
+	LLNode<E> currentNode = head.next;
+	while(count<index){
+		currentNode=currentNode.next;
+		count++;
+	}
+		return currentNode.data;
+	
 	}
 
 	/**
@@ -44,15 +61,34 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	 */
 	public void add(int index, E element ) 
 	{
-		// TODO: Implement this method
+		if(element==null){
+			throw new NullPointerException();
+		}
+		
+		if(index<0 || index>size){//element can be added upto last index + 1 
+			throw new IndexOutOfBoundsException();
+		}
+		
+		LLNode<E> newNode = new LLNode<E>(element);
+		LLNode<E> currentNode = head;
+		for(int i=0;i<index;i++){
+			currentNode = currentNode.next;
+		}
+		
+		newNode.next = currentNode.next;
+		currentNode.next.prev = newNode;
+		currentNode.next = newNode;
+		newNode.prev = currentNode;
+		
+				
+		size++;		
 	}
 
 
 	/** Return the size of the list */
 	public int size() 
 	{
-		// TODO: Implement this method
-		return -1;
+		return size;
 	}
 
 	/** Remove a node at the specified index and return its data element.
@@ -63,8 +99,20 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	 */
 	public E remove(int index) 
 	{
-		// TODO: Implement this method
-		return null;
+		if(index<0 || index>size-1){
+				throw new IndexOutOfBoundsException();
+		}
+		LLNode<E> currentNode = head.next;
+		for(int i=0;i<index;i++){
+			currentNode = currentNode.next;
+		}
+		
+		//now reached the desired node to be removed
+		currentNode.prev.next=currentNode.next;
+		currentNode.next.prev = currentNode.prev;
+		size--;
+		return currentNode.data;
+		
 	}
 
 	/**
@@ -76,8 +124,24 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	 */
 	public E set(int index, E element) 
 	{
-		// TODO: Implement this method
-		return null;
+		if(element==null){
+			throw new NullPointerException();
+		}
+		
+		if(index<0 || index>size-1){
+			throw new IndexOutOfBoundsException();
+		}
+		
+		LLNode<E> currentNode = head.next;
+		
+		for(int i=0;i<index;i++){
+			currentNode = currentNode.next;
+		}
+		
+		E oldValue =  currentNode.data;
+		currentNode.data=element;
+		
+		return oldValue;
 	}   
 }
 

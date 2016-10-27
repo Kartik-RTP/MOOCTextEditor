@@ -114,7 +114,33 @@ public class MyLinkedListTester {
 		assertEquals("Remove: check element 0 is correct ", (Integer)21, list1.get(0));
 		assertEquals("Remove: check size is correct ", 2, list1.size());
 		
-		// TODO: Add more tests here
+		int b = list1.remove(1);
+		assertEquals("Remove: check b is correct ", 42, b);
+		assertEquals("Remove: check element 1 is correct ", (Integer)21, list1.get(0));
+		assertEquals("Remove: check size is correct ", 1, list1.size());
+		
+		
+		try{
+			int temp = list1.remove(LONG_LIST_LENGTH);
+			fail("check out of bounds");
+			
+		}catch(IndexOutOfBoundsException e){
+			
+		}
+		
+		try {
+			int temp = longerList.remove(-1);
+			fail("Check out of bounds");
+		}
+		catch (IndexOutOfBoundsException e) {
+		
+		}
+		
+		int c = list1.remove(0);//removing when only single element is there
+		assertEquals("Remove: check b is correct ", 21, c);
+		//assertEquals("Remove: check element 1 is correct ", null, list1.get(0));
+		assertEquals("Remove: check size is correct ", 0, list1.size());
+		
 	}
 	
 	/** Test adding an element into the end of the list, specifically
@@ -122,9 +148,19 @@ public class MyLinkedListTester {
 	 * */
 	@Test
 	public void testAddEnd()
-	{
-        // TODO: implement this test
-		
+	{	//test 1 : add some element and see the element at the end of list
+        list1.add(66);
+        assertEquals("test 1 : add some element and see the element at the end of list",(Integer)66,list1.get(list1.size()-1));
+        assertEquals(4,list1.size());
+        
+        //test2 : add null element
+        try{
+        	list1.add(null);
+        }catch(NullPointerException e){
+        	
+        }
+        
+        
 	}
 
 	
@@ -132,7 +168,33 @@ public class MyLinkedListTester {
 	@Test
 	public void testSize()
 	{
-		// TODO: implement this test
+
+	    //test1: add some element 
+		list1.add(45);
+		assertEquals("test1: add some element",4,list1.size() );
+		//test2: call add method but pass invalid index
+		try{
+			list1.add(56,45);
+		}catch(IndexOutOfBoundsException e){
+			assertEquals("test2: call add method but pass invalid index",4,list1.size() );	
+		}
+		//test3: call add method but pass null value
+		try{
+			list1.add(null);
+			
+		}catch(NullPointerException e){
+			assertEquals("test2: call add method but pass null value",4,list1.size() );
+		}
+		//test4: remove some element
+		int a = list1.remove(1);
+		assertEquals("test4: remove some element",3,list1.size());
+		//test4: call remove index but pass invalid index
+		try{
+			list1.remove(56);
+		}catch(IndexOutOfBoundsException e){
+			assertEquals("test4: call remove index but pass invalid index",3,list1.size() );
+		}
+		
 	}
 
 	
@@ -144,16 +206,67 @@ public class MyLinkedListTester {
 	@Test
 	public void testAddAtIndex()
 	{
-        // TODO: implement this test
+		//test1 : insert at head
+		list1.add(0,93);
+		assertEquals("test1 : insert at start", (Integer)93, list1.get(0));
+		assertEquals(4,list1.size);
+		//test2 : insert at tail  ..
 		
+		list1.add(4,2234);
+		assertEquals("test2 : insert at end", (Integer)2234, list1.get(4));
+		assertEquals(5,list1.size);
+		
+		
+		//test3 : insert in between
+		list1.add(2,33);
+		assertEquals("test3 : insert in between", (Integer)33, list1.get(2));
+		assertEquals(6,list1.size);
+		
+		try{
+			list1.add(-1,56);
+		}catch(IndexOutOfBoundsException e){
+
+		}
+		
+		
+		try{
+			list1.add(list1.size()+223,56);
+		}catch(IndexOutOfBoundsException e){
+
+		}
+
 	}
 	
 	/** Test setting an element in the list */
 	@Test
 	public void testSet()
 	{
-	    // TODO: implement this test
-	    
+		//test1: use set at start
+		list1.add(633);
+		list1.add(45436);
+		
+		list1.set(0, 22);
+		assertEquals("test1: use set at start",(Integer)22,list1.get(0));
+		
+		//test2: use set at end
+		list1.set(list1.size()-1, 33);
+		assertEquals("test2: use set at end",(Integer)33,list1.get(list1.size()-1));
+			
+		//test3 : use set at some middle one
+		list1.set(2, 456);
+		assertEquals("test3 : use set at some middle one",(Integer)456,list1.get(2));
+		
+		try{
+			list1.set(list1.size()+23,56);
+		}catch(IndexOutOfBoundsException e){
+	
+		}
+		try{
+			list1.set(-34,56);
+		}catch(IndexOutOfBoundsException e){
+
+		}
+		
 	}
 	
 	
