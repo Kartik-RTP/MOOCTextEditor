@@ -1,7 +1,9 @@
 package spelling;
 
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -39,8 +41,31 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	 */
 	public boolean addWord(String word)
 	{
-	    //TODO: Implement this method.
-	    return false;
+		word = word.toLowerCase();//applying constraint
+		TrieNode currentNode = root;
+		boolean isAlreadyPresent=true;
+		//run loop for the length of the word
+		
+		for(int i=0;i<word.length();i++){
+			if( currentNode.getChild(word.charAt(i))!=null  ){
+				currentNode = currentNode.getChild(word.charAt(i));
+				
+			}else{//this node is not present
+				currentNode = currentNode.insert(word.charAt(i));//therefore we add this node
+				isAlreadyPresent = false;//if we add node at any stage , that means it is not present
+			}
+		}
+		//at the end of loop , currentNode represents the node of that word 
+		//we should make sure , its isWord property is true
+		
+		if(!isAlreadyPresent || !currentNode.endsWord() ){
+			//i.e. we added the node , we have to set its isWordProperty
+			currentNode.setEndsWord(true);
+			isAlreadyPresent=false;//because the node was present but the word wasn't
+			size++;//we also increase size as no of words increase
+		}
+		
+	    return !isAlreadyPresent; //if its present we return false .. as no add was done
 	}
 	
 	/** 
@@ -49,8 +74,7 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	 */
 	public int size()
 	{
-	    //TODO: Implement this method
-	    return 0;
+	    return size;
 	}
 	
 	
@@ -58,9 +82,28 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	 * described in the videos for this week. */
 	@Override
 	public boolean isWord(String s) 
-	{
-	    // TODO: Implement this method
-		return false;
+	{	
+		
+		//Note a word is present if 
+		//1)there is a path from root till that text 
+		//2) also that node is a word and not an internal node
+	    
+		s=s.toLowerCase();
+		TrieNode currentNode = root;
+		for(int i=0;i<s.length();i++){
+			if(              ( currentNode = currentNode.getChild(s.charAt(i)) )  == null   ){
+				//not present 
+				return false;
+			}
+			
+		}//currentNode represents the node which has text same as that of the word
+		
+		
+		if(!currentNode.endsWord()){ // if its an internal word and its endsWord property is false
+			return false;
+		}
+		//if control reaches till here , it means this word exists
+		return true;
 	}
 
 	/** 
@@ -86,6 +129,24 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
      */@Override
      public List<String> predictCompletions(String prefix, int numCompletions) 
      {
+    	 List<String> predictions = new LinkedList<String>();
+    	 prefix = prefix.toLowerCase();//applying constraint
+    	 TrieNode currentNode = root;
+    	 
+    	//find the stem
+    	 for(int i=0;i<prefix.length();i++){
+    		 if(  (currentNode = currentNode.getChild(prefix.charAt(i)) )==null       ){
+    			 //prefix stem not present
+    			 return predictions;//as an empty list
+    		 }
+    		 
+    	 }
+    	 //reaching here means that  currentNode currently represents stem node
+    	 //now apply BFS on currentNode
+    	  
+    	 predictions = BFS(currentNode,numCompletions);
+    	 
+    	 
     	 // TODO: Implement this method
     	 // This method should implement the following algorithm:
     	 // 1. Find the stem in the trie.  If the stem does not appear in the trie, return an
@@ -101,8 +162,36 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
     	 //       Add all of its child nodes to the back of the queue
     	 // Return the list of completions
     	 
-         return null;
+         return predictions;
      }
+     
+     /**helper method for predictCompletions
+      * 
+      * */
+     private List<String> BFS(TrieNode root , int numCompletions){
+    	 List<String> words = new LinkedList<String>();
+    	 Queue<TrieNode> queue = new LinkedList<TrieNode>();
+    	 int noOfWords=0;
+    	 queue.add(root);
+    	 TrieNode current;
+    	 while(noOfWords<numCompletions && queue.size()>0){
+    		 current = queue.remove();
+    		 if(current.endsWord()){
+    			 words.add(current.getText());
+    			 noOfWords++;
+    		 }
+    		 for(char c : current.getValidNextCharacters()){
+    			 queue.add(current.getChild(c));
+    		 }
+    		 
+    		
+    		 
+    	 }
+    	 
+      	 return words;
+     }
+     
+     
 
  	// For debugging
  	public void printTree()

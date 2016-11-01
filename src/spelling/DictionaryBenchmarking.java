@@ -14,7 +14,7 @@ public class DictionaryBenchmarking {
 
 	    // Run each test more than once to get bigger numbers and less noise.
 	    // You can try playing around with this number.
-	    int trials = 500;
+	    int trials = 300;
 
 	    // The text to test on
 	    String dictFile = "data/dict.txt";
