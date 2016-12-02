@@ -7,6 +7,7 @@ package spelling;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * WPTree implements WordPath by dynamically creating a tree of words during a Breadth First
@@ -27,9 +28,9 @@ public class WPTree implements WordPath {
 	public WPTree () {
 		this.root = null;
 		// TODO initialize a NearbyWords object
-		// Dictionary d = new DictionaryHashSet();
-		// DictionaryLoader.loadDictionary(d, "data/dict.txt");
-		// this.nw = new NearbyWords(d);
+		 Dictionary d = new DictionaryHashSet();
+		 DictionaryLoader.loadDictionary(d, "data/dict.txt");
+		 this.nw = new NearbyWords(d);
 	}
 	
 	//This constructor will be used by the grader code
@@ -40,9 +41,36 @@ public class WPTree implements WordPath {
 	
 	// see method description in WordPath interface
 	public List<String> findPath(String word1, String word2) 
-	{
-	    // TODO: Implement this method.
-	    return new LinkedList<String>();
+	{	this.root = new WPTreeNode(word1, null);
+		WPTreeNode currentNode = root;
+		List<String> pathList = new LinkedList<String>();
+		HashSet<String> visited = new HashSet<String>();   // to avoid exploring the same 
+		Queue<WPTreeNode> queue = new LinkedList<WPTreeNode>();
+		
+		
+		queue.add(root);
+		visited.add(word1);
+		
+		while(queue.size()>0){
+			currentNode = queue.remove();
+			if(currentNode.getWord().equals(word2)){
+				return currentNode.buildPathToRoot();
+			}
+			List<String> neighbours = new LinkedList<String>();
+			nw.substitution(currentNode.getWord(), neighbours, true);
+			nw.insertions(currentNode.getWord(), neighbours, true);
+			nw.deletions(currentNode.getWord(), neighbours, true);
+			
+			for(String word:neighbours){
+				if(!visited.contains(word)){
+					queue.add(new WPTreeNode(word,currentNode));
+				}
+			}
+			
+			
+		}
+		
+	    return null;
 	}
 	
 	// Method to print a list of WPTreeNodes (useful for debugging)
@@ -55,6 +83,11 @@ public class WPTree implements WordPath {
 		ret+= "]";
 		return ret;
 	}
+
+	public static  void main(String[] args){
+		//do nothing
+	}
+	
 	
 }
 
